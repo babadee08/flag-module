@@ -1,7 +1,7 @@
 <?php
 
 /**
- *
+ * Implements hook_flag_default_flags
  */
 function flag_application_flag_default_flags() {
     $flags = [];
@@ -38,5 +38,58 @@ function flag_application_flag_default_flags() {
         'api_version' => 3,
     ];
     return $flags;
+}
 
+/**
+ * Act on an object being flagged.
+ *
+ * @param flag_flag $flag
+ *  The flag object.
+ * @param int $entity_id
+ *  The id of the entity the flag is on.
+ * @param $account
+ *  The user account performing the action.
+ * @param $flagging_id
+ *  The flagging entity.
+ * Implements hook_flag_flag
+ * @throws Exception
+ */
+function flag_application_flag_flag($flag, $entity_id, $account, $flagging) {
+    /*dpm($flag);
+    dpm($entity_id);
+    dpm($account);*/
+    dpm($flagging);
+
+    if ($flag->name == 'flag_application') {
+        $node_id = db_insert('flag_application')
+            ->fields([
+                'flagging_id' => $flagging->flagging_id,
+                'status' => 0,
+            ])
+            ->execute();
+    }
+}
+
+/**
+ * Act on an object being unflagged.
+ *
+ * This is invoked after the flag count has been decreased, but before the
+ * flagging entity has been deleted.
+ *
+ * @param $flag
+ *  The flag object.
+ * @param int $entity_id
+ *  The id of the entity the flag is on.
+ * @param $account
+ *  The user account performing the action.
+ * @param $flagging
+ *  The flagging entity.
+ */
+function flag_application_flag_unflag($flag, $entity_id, $account, $flagging) {
+
+    if ($flag->name == 'flag_application') {
+        $deleted = db_delete('flag_application')
+            ->condition('flagging_id', $flagging->flagging_id)
+            ->execute();
+    }
 }
