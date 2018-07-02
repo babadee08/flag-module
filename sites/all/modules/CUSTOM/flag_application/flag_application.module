@@ -93,3 +93,29 @@ function flag_application_flag_unflag($flag, $entity_id, $account, $flagging) {
             ->execute();
     }
 }
+
+
+/**
+ * Implements hook_menu().
+ */
+function flag_application_menu() {
+    $items['admin/structure/flags/flag_application'] = array(
+        'title' => 'Flag Applications',
+        'description' => 'Find and manage flag applications.',
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('flag_application_form'),
+        'access callback' => 'flag_application_permission',
+//        'access arguments' => array('access content'),
+        'weight' => -10,
+        'file' => 'flag_application.admin.inc',
+    );
+
+    return $items;
+}
+
+/**
+ * implements hook_permission()
+ */
+function flag_application_permission() {
+    return TRUE;
+}
