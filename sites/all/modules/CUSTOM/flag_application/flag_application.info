@@ -1,0 +1,5 @@
+name = Flag Application
+description = Flang entities and have an admin review and approve
+dependencies[] = flag (3.x)
+core = 7.x
+package = Flags
