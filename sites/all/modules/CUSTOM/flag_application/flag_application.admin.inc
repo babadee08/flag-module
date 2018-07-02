@@ -91,3 +91,55 @@ function flag_application_form($form, $form_state) {
 
     return $form;
 }
+
+function flag_application_form_validate($form, $form_state) {
+    // dpm($form); dpm($form_state);
+
+    $action = $form_state['values']['approvedeny'];
+
+    if (!in_array($action, [1, 2])) {
+        form_set_error('approvedeny', 'You have provided an incorrect value');
+    }
+}
+
+function flag_application_form_submit($form, $form_state) {
+    /*dpm($form);
+    dpm($form_state); */
+
+    $action = $form_state['values']['approvedeny'];
+
+    $values = [];
+
+    foreach ($form_state['values']['flag_application_table'] as $key => $value) {
+        if (is_string($value) == TRUE) {
+            $values[] = $form_state['complete form']['flag_application_table']['#options'][$value];
+        }
+    }
+
+    flag_application_administration($action, $values);
+}
+
+function flag_application_administration($action, $values) {
+    // dpm($action); dpm($values);
+
+    $status = ($action == 1) ? 'Approved' : 'Denied';
+
+    foreach ($values as $key => $value) {
+        $num_updated = db_update('flag_application')
+            ->fields([
+                'status' => $action
+            ])
+            ->condition('flagging_id', $value['flagging_id'])
+            ->execute();
+
+        /*if (module_exists('rules')) {
+            rules_invoke_event('flag_application_reviewed', $value['flagging_id'], $action);
+        }*/
+
+        watchdog('flag_application', t("!name's application for !node was !status"), [
+            '!name' => $value['name'],
+            '!node' => $value['title'],
+            '!status' => $status
+        ]);
+    }
+}
