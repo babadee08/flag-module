@@ -104,8 +104,8 @@ function flag_application_menu() {
         'description' => 'Find and manage flag applications.',
         'page callback' => 'drupal_get_form',
         'page arguments' => array('flag_application_form'),
-        'access callback' => 'flag_application_permission',
-//        'access arguments' => array('access content'),
+//        'access callback' => 'flag_application_permission',
+        'access arguments' => array('administer flag applications'),
         'weight' => -10,
         'file' => 'flag_application.admin.inc',
     );
@@ -117,5 +117,12 @@ function flag_application_menu() {
  * implements hook_permission()
  */
 function flag_application_permission() {
-    return TRUE;
+    // return TRUE;
+
+    return [
+        'administer flag applications' => [
+            'title' => t('Administer Flag Applications'),
+            'description' => t('Approve and Deny Flag Applications'),
+        ]
+    ];
 }
