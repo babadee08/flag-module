@@ -128,8 +128,8 @@ function flag_application_permission() {
 }
 
 function flag_application_form_flag_form_alter(&$form, &$form_state, $form_id) {
-    /*dpm($form_id);*/
-    dpm($form);
+    //dpm($form_id); dpm($form);
+
     if ($form['#flag_name'] == 'flag_application') {
         $form['flag_application'] = [
             '#type' => 'fieldset',
@@ -138,15 +138,15 @@ function flag_application_form_flag_form_alter(&$form, &$form_state, $form_id) {
             'flag_application_approved_action' => [
                 '#type' => 'checkbox',
                 '#title' => 'Flag Application Settings',
-                '#default_value' => $form['#flag']->flag_application_approved_action,
-                //'#default_value' => variable_get('flag_application_approved_action', 0),
+                //'#default_value' => $form['#flag']->flag_application_approved_action,
+                '#default_value' => variable_get('flag_application_approved_action', 0),
                 '#description' => 'Disable link for other users once application is approved'
             ],
             'flag_application_maintained_message' => [
                 '#type' => 'textfield',
                 '#title' => 'Maintained message',
-                '#default_value' => $form['#flag']->flag_application_maintained_message,
-                //'#default_value' => variable_get('flag_application_maintained_message', ''),
+                //'#default_value' => $form['#flag']->flag_application_maintained_message,
+                '#default_value' => variable_get('flag_application_maintained_message', ''),
                 '#description' => 'Message to display if the node has an application approved for it and the link is disabled'
             ],
         ];
