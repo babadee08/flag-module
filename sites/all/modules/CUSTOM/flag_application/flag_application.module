@@ -172,3 +172,41 @@ function flag_application_flag_options_alter(&$options, $flag) {
         $options['flag_application_maintained_message'] = '';
     }
 }
+
+/**
+ * Implements hook_preprocess_flag
+ * @param $vars
+ */
+function flag_application_preprocess_flag(&$vars) {
+    // dpm($vars);
+    $action = variable_get('flag_application_approved_action', 0);
+    $message = variable_get('flag_application_maintained_message', '');
+
+    if ($vars['flag']->name == 'flag_application') {
+
+        if ($action == 1 && flag_application_application_approved($vars['entity_id'])) {
+            $vars['link_href'] = '';
+            $vars['link_text'] = $message;
+        }
+
+    }
+}
+
+/**
+ * @param $entity_id
+ * @return bool
+ */
+function flag_application_application_approved($entity_id) {
+    $response = false;
+    $sql = "SELECT fa.status FROM flag_application fa LEFT JOIN flagging f ON fa.flagging_id = f.flagging_id WHERE f.entity_id=:eid AND fa.status=:status";
+    $conditions = [
+        ':eid' => $entity_id,
+        ':status' => 1
+    ];
+
+    if (db_query($sql, $conditions)->fetchField()) {
+        $response = true;
+    }
+
+    return $response;
+}
